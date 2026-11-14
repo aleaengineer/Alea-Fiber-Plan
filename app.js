@@ -47,12 +47,12 @@ function resizeMapCanvas() {
   svg.setAttribute('height', height);
   document.querySelector('#map-zoom-level').textContent = `${Math.round(mapZoom * 100)}%`;
   document.querySelector('#map-zoom-out').disabled = mapZoom <= 0.5;
-  document.querySelector('#map-zoom-in').disabled = mapZoom >= 3;
 }
 
 function setMapZoom(zoom, pointerX = mapScroll.clientWidth / 2, pointerY = mapScroll.clientHeight / 2) {
   if (!mapLayout) return;
-  const nextZoom = Math.min(3, Math.max(0.5, zoom));
+  const nextZoom = Math.max(0.5, zoom);
+  if (!Number.isFinite(nextZoom)) return;
   if (nextZoom === mapZoom) return;
   const mapRect = svg.getBoundingClientRect();
   const scrollRect = mapScroll.getBoundingClientRect();
