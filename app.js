@@ -33,6 +33,8 @@ const editorBody = document.querySelector('#editor-body');
 let mapLayout = null;
 let mapZoom = 1;
 let dragState = null;
+let pinchState = null;
+const mapPointers = new Map();
 let suppressMapClick = false;
 
 function resizeMapCanvas() {
@@ -717,7 +719,20 @@ mapScroll.addEventListener('wheel', (event) => {
 }, { passive: false });
 
 mapScroll.addEventListener('pointerdown', (event) => {
-  if (!event.isPrimary || event.button !== 0) return;
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  mapPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  if (mapPointers.size === 2) {
+    const [first, second] = [...mapPointers.values()];
+    pinchState = {
+      distance: Math.hypot(second.x - first.x, second.y - first.y),
+      zoom: mapZoom
+    };
+    dragState = null;
+    mapScroll.classList.remove('dragging');
+    suppressMapClick = true;
+    return;
+  }
+  if (mapPointers.size !== 1) return;
   dragState = {
     pointerId: event.pointerId,
     startX: event.clientX,
@@ -729,6 +744,23 @@ mapScroll.addEventListener('pointerdown', (event) => {
 });
 
 mapScroll.addEventListener('pointermove', (event) => {
+  if (mapPointers.has(event.pointerId)) {
+    mapPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  }
+  if (pinchState && mapPointers.size >= 2) {
+    const [first, second] = [...mapPointers.values()];
+    const distance = Math.hypot(second.x - first.x, second.y - first.y);
+    if (pinchState.distance > 0) {
+      const bounds = mapScroll.getBoundingClientRect();
+      setMapZoom(
+        pinchState.zoom * distance / pinchState.distance,
+        (first.x + second.x) / 2 - bounds.left,
+        (first.y + second.y) / 2 - bounds.top
+      );
+    }
+    suppressMapClick = true;
+    return;
+  }
   if (!dragState || dragState.pointerId !== event.pointerId) return;
   const deltaX = event.clientX - dragState.startX;
   const deltaY = event.clientY - dragState.startY;
@@ -744,6 +776,24 @@ mapScroll.addEventListener('pointermove', (event) => {
 });
 
 function finishMapDrag(event) {
+  const wasPinching = Boolean(pinchState);
+  mapPointers.delete(event.pointerId);
+  if (wasPinching) {
+    pinchState = null;
+    if (mapPointers.size === 1) {
+      const [pointerId, point] = [...mapPointers.entries()][0];
+      dragState = {
+        pointerId,
+        startX: point.x,
+        startY: point.y,
+        scrollLeft: mapScroll.scrollLeft,
+        scrollTop: mapScroll.scrollTop,
+        moved: false
+      };
+    }
+    setTimeout(() => { suppressMapClick = false; }, 100);
+    return;
+  }
   if (!dragState || dragState.pointerId !== event.pointerId) return;
   mapScroll.classList.remove('dragging');
   if (mapScroll.hasPointerCapture(event.pointerId)) mapScroll.releasePointerCapture(event.pointerId);

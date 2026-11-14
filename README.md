@@ -30,7 +30,7 @@ Tidak diperlukan instalasi package, server, atau proses kompilasi. Untuk pengemb
 2. Pilih output pada diagram, lalu tekan **Tambahkan splitter** untuk membuat coupler.
 3. Pilih jenis dan rasio FBT/PLC melalui dropdown coupler.
 4. Pilih kabel atau output untuk mengatur panjang kabelnya.
-5. Geser diagram dengan drag. Gunakan roda mouse atau tombol **− / +** untuk zoom; tombol **Pas** mengembalikan ukuran tampilan.
+5. Geser diagram dengan drag atau satu jari. Di ponsel, cubit dengan dua jari untuk zoom; di desktop, gunakan roda mouse atau tombol **− / +**. Tombol **Pas** mengembalikan ukuran tampilan.
 6. Gunakan **Ekspor CSV** untuk mengunduh tabel per output. Untuk PDF, pilih **Ekspor PDF**, lalu pilih **Simpan sebagai PDF** pada dialog cetak browser.
 
 Tombol **Atur ulang** mengembalikan parameter dan topologi ke kondisi awal tanpa coupler.
