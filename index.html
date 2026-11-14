@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b2541">
+    <meta name="description" content="Rancang jaringan fiber optik bercabang dan hitung estimasi daya di setiap titik.">
+    <title>Alea Fiber Plan</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-bar">
+      <a class="brand" href="#" aria-label="Alea Fiber Plan beranda">
+        <span class="brand-icon" aria-hidden="true">⌁</span>
+        <span>Alea <strong>Fiber Plan</strong></span>
+      </a>
+      <div class="bar-actions">
+        <span class="save-status"><i></i> TERSIMPAN DI PERANGKAT</span>
+        <button class="export-button" id="export-csv" type="button">Ekspor CSV</button>
+        <button class="export-button" id="export-pdf" type="button" title="Buka dialog cetak, lalu pilih Simpan sebagai PDF">Ekspor PDF</button>
+        <button class="reset-button" id="reset-network" type="button">Atur ulang</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="network-controls" aria-label="Parameter jaringan">
+        <label class="control-field">
+          <span>TRANSMITTER <small>klik ikon di peta untuk detail</small></span>
+          <span class="control-input"><input id="tx-power" type="number" value="15" min="-60" max="30" step="0.1"><b>dBm</b></span>
+        </label>
+        <span class="control-connector" aria-hidden="true">→</span>
+        <label class="control-field">
+          <span>LOSS PER KM</span>
+          <span class="control-input"><input id="attenuation" type="number" value="0.35" min="0" max="10" step="0.01"><b>dB/km</b></span>
+        </label>
+        <span class="control-divider"></span>
+        <label class="control-field">
+          <span>JARAK FEEDER</span>
+          <span class="control-input"><input id="feeder-length" type="number" value="5" min="0.01" max="1000" step="0.01"><b>km</b></span>
+        </label>
+        <div class="network-summary"><span class="summary-dot"></span> <span id="network-summary">1 splitter · 2 output</span></div>
+      </section>
+
+      <section class="instructions">
+        <div>
+          <p class="eyebrow">NETWORK MAP <span> / </span> LIVE CALCULATION</p>
+          <h1>Rancang jaringan fiber Anda</h1>
+          <p class="intro">Pilih splitter atau output untuk mengatur rasio dan panjang kabel. Daya optik diperbarui otomatis di setiap cabang.</p>
+        </div>
+        <div class="legend">
+          <span><i class="legend-fiber"></i> Fiber optik</span>
+          <span><i class="legend-power"></i> Daya terhitung</span>
+          <span><i class="legend-output"></i> Titik output</span>
+        </div>
+      </section>
+
+      <section class="map-card" aria-label="Diagram jaringan fiber optik">
+        <div class="map-toolbar">
+          <span class="map-title"><i></i> DIAGRAM TOPOLOGI</span>
+          <span class="map-tip">Pilih transmitter, splitter, atau output untuk mengedit</span>
+          <span class="map-count" id="map-count">2 PORT</span>
+          <div class="map-zoom-controls" role="group" aria-label="Kontrol tampilan diagram">
+            <button type="button" id="map-zoom-out" aria-label="Perkecil diagram" title="Perkecil">−</button>
+            <span id="map-zoom-level" aria-live="polite">100%</span>
+            <button type="button" id="map-zoom-in" aria-label="Perbesar diagram" title="Perbesar">+</button>
+            <button type="button" id="map-zoom-fit" aria-label="Tampilkan seluruh diagram" title="Tampilkan seluruh diagram">Pas</button>
+          </div>
+        </div>
+        <div class="map-scroll">
+          <svg id="network-map" role="img" aria-label="Diagram topologi splitter fiber optik"></svg>
+        </div>
+      </section>
+
+      <section class="editor-card" id="editor-card" aria-live="polite">
+        <div class="editor-heading">
+          <div class="selection-icon" id="selection-icon" aria-hidden="true">⌘</div>
+          <div><p class="eyebrow" id="selection-kicker">SPLITTER TERPILIH</p><h2 id="selection-title">Splitter 1</h2></div>
+          <span class="selection-power" id="selection-power"></span>
+        </div>
+        <div class="editor-body" id="editor-body"></div>
+      </section>
+
+      <p class="engineering-note"><span>i</span> Estimasi daya memperhitungkan pembagian splitter, loss kabel, connector loss per link, dan safety margin. Verifikasi hasil terhadap datasheet serta pengukuran lapangan.</p>
+    </main>
+
+    <section class="print-report" id="print-report" aria-hidden="true"></section>
+    <footer>ALEA FIBER PLAN <span>·</span> PERENCANAAN JARINGAN FTTH</footer>
+  </body>
+</html>
